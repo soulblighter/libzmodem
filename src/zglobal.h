@@ -24,7 +24,7 @@
   02111-1307, USA.
 */
 
-#include "config.h"
+//#include "config.h"
 #include <sys/types.h>
 #include <stdarg.h>
 #include <sys/time.h>
@@ -58,7 +58,7 @@
 # define LRZSZ_ATTRIB_CONST  __attribute__((__const__))
 #endif
 
-    /* gcc.info sagt, noreturn wäre ab 2.5 verfügbar. HPUX-gcc 2.5.8
+    /* gcc.info sagt, noreturn wï¿½re ab 2.5 verfï¿½gbar. HPUX-gcc 2.5.8
      * kann es noch nicht - what's this?
      */
 #if __GNUC__ > 2 || (__GNUC__ == 2 && __GNUC_MINOR__ > 5)
@@ -132,7 +132,6 @@
 #define DEFBYTL 2000000000L	/* default rx file size */
 
 
-
 enum zm_type_enum {
 	ZM_ZMODEM
 };
@@ -176,5 +175,17 @@ int tcp_accept (int d) LRZSZ_ATTRIB_SECTION(lrzsz_rare);
 
 
 const char * protname (void) LRZSZ_ATTRIB_SECTION(lrzsz_rare);
+
+
+
+#define ANSI_COLOR_RED     "\x1b[31m"
+#define ANSI_COLOR_GREEN   "\x1b[32m"
+#define ANSI_COLOR_YELLOW  "\x1b[33m"
+#define ANSI_COLOR_BLUE    "\x1b[34m"
+#define ANSI_COLOR_MAGENTA "\x1b[35m"
+#define ANSI_COLOR_CYAN    "\x1b[36m"
+#define ANSI_COLOR_RESET   "\x1b[0m"
+
+
 
 #endif

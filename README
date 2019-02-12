@@ -1,3 +1,22 @@
+# Julio changes:
+
+## How to build:
+```
+$ make
+
+$ ls .build/x86_64/
+libzmodem.a  mrz  msz  src
+```
+
+## Cross build
+```
+$ export AR="arm-linux-androideabi-ar"
+$ export CC="arm-linux-androideabi-clang"
+$ make
+
+$ ls .build/armv7a/
+libzmodem.a  mrz  msz  src
+```
 ================================================================
 
 			      LIBZMODEM

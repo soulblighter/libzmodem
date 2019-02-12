@@ -8,6 +8,7 @@
 extern "C" {
 #endif
 
+
 /* Result codes */
 #define RZSZ_NO_ERROR (0)
 #define RZSZ_ERROR (1)
@@ -58,10 +59,11 @@ extern "C" {
 
    The return value is the sum of the sizes of the files successfully
    transfered. */
-size_t zmodem_receive(const char *directory,
-		      bool (*approver)(const char *filename, size_t size, time_t date),
+size_t zmodem_receive(int fd, const char *directory, int timeout,
+		      bool (*approver)(const char *filename, size_t size, time_t date, int file_num, int file_count),
 		      bool tick_cb(const char *fname, long bytes_sent, long bytes_total, long last_bps, int min_left, int sec_left),
-		      void (*complete)(const char *filename, int result, size_t size, time_t date),
+		      void (*complete)(const char *filename, int result, size_t size, time_t date, int file_num, int file_count),
+		      bool kill_cb(),
 		      uint64_t min_bps,
 		      uint32_t flags);
 
@@ -104,10 +106,10 @@ size_t zmodem_receive(const char *directory,
 
    The return value is the sum of the sizes of the files successfully
    transfered. */
-size_t zmodem_send(int file_count,
+size_t zmodem_send(int fd, int file_count,
 		   const char **file_list,
 		   bool (*tick)(long bytes_sent, long bytes_total, long last_bps, int min_left, int sec_left),
-		   void (*complete)(const char *filename, int result, size_t size, time_t date),
+		   void (*complete)(const char *filename, int result, size_t size, time_t date, int file_num, int file_count),
 		   uint64_t min_bps,
 		   uint32_t flags);
 

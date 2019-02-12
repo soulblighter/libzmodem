@@ -41,6 +41,11 @@ long Locbit = LLITOUT;	/* Bit SUPPOSED to disable output translations */
 #endif
 
 #include <sys/ioctl.h>
+
+#ifndef FIONREAD    // cygwin defines FIONREAD in  socket.h  instead of  ioctl.h
+#include <sys/socket.h>
+#endif
+
 #include <sys/sysmacros.h>
 
 static struct {
@@ -73,6 +78,9 @@ static struct {
 #endif
 #ifdef EXTB
 	{38400,	EXTB},
+#endif
+#ifdef B4000000
+	{4000000,	B4000000},
 #endif
 	{0, 0}
 };
@@ -175,10 +183,10 @@ io_mode(int fd, int n)
 #else
 		tty.c_cc[VQUIT] = -1;			/* Quit char */
 #endif
-		tty.c_cc[VMIN] = 1;
+		tty.c_cc[VMIN] = 0;
 		tty.c_cc[VTIME] = 1;	/* or in this many tenths of seconds */
 
-		tcsetattr(fd,TCSADRAIN,&tty);
+		//tcsetattr(fd,TCSADRAIN,&tty);
 
 		return getspeed(cfgetospeed(&tty));
 	case 1:
@@ -201,16 +209,21 @@ io_mode(int fd, int n)
 		/* Set character size = 8 */
 		tty.c_cflag &= ~(CSIZE);
 		tty.c_cflag |= CS8;
-		tty.c_cc[VMIN] = 1; /* This many chars satisfies reads */
-		tty.c_cc[VTIME] = 1;	/* or in this many tenths of seconds */
+		tty.c_cc[VMIN] = 0; /* This many chars satisfies reads */
+		tty.c_cc[VTIME] = 5;	/* or in this many tenths of seconds */
+
+
+		cfsetispeed(&tty, B115200);
+		cfsetospeed(&tty, B115200);
+
 		tcsetattr(fd,TCSADRAIN,&tty);
 		return getspeed(cfgetospeed(&tty));
 	case 0:
 		if(!did0)
 			return 0;
-		tcdrain (fd); /* wait until everything is sent */
+		//tcdrain (fd); /* wait until everything is sent */
 		tcflush (fd,TCIOFLUSH); /* flush input queue */
-		tcsetattr (fd,TCSADRAIN,&oldtty);
+		//tcsetattr (fd,TCSADRAIN,&oldtty);
 		tcflow (fd,TCOON); /* restart output */
 
 		return getspeed(cfgetospeed(&tty));

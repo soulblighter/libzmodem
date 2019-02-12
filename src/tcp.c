@@ -21,7 +21,7 @@
   originally written by Uwe Ohse
 */
 
-#include "config.h"
+//#include "config.h"
 
 #include <sys/types.h>
 #include <sys/socket.h>

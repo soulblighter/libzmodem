@@ -1,6 +1,6 @@
 # http://www.gnu.org/software/automake
 
-Makefile
+# Makefile
 Makefile.in
 /build-aux/ar-lib
 /mdate-sh
@@ -118,3 +118,5 @@ dkms.conf
 *.orig
 *.bak
 \#*
+
+.build/

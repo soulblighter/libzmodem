@@ -32,6 +32,12 @@
 #include <ctype.h>
 #include <errno.h>
 
+#include <stdio.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <sys/select.h>
+
 #include "log.h"
 
 /* Ward Christensen / CP/M parameters - Don't change these! */
@@ -72,6 +78,7 @@ zreadline_getc(zreadline_t *zr, int timeout)
 static void
 zreadline_alarm_handler(int dummy LRZSZ_ATTRIB_UNUSED)
 {
+  fprintf(stderr, ANSI_COLOR_RED "\n zreadline_alarm_handler \n" ANSI_COLOR_RESET);
 	/* doesn't need to do anything */
 }
 
@@ -100,9 +107,38 @@ readline_internal(zreadline_t *zr, unsigned int timeout)
 	else
 		log_trace("Calling read: Readnum=%d ", zr->readline_readnum);
 	zr->readline_ptr = zr->readline_buffer;
-	zr->readline_left = read(zr->readline_fd,
+
+
+
+
+  fd_set set;
+  struct timeval select_timeout;
+  int rv;
+
+  FD_ZERO(&set); /* clear the set */
+  FD_SET(zr->readline_fd, &set); /* add our file descriptor to the set */
+
+  select_timeout.tv_sec = 5;
+  select_timeout.tv_usec = 0;
+
+  rv = select(FD_SETSIZE, &set, NULL, NULL, &select_timeout);
+  if(rv == -1) {
+    perror("select"); /* an error accured */
+    return TIMEOUT;
+  }
+  else if(rv == 0) {
+    log_trace("timeout"); /* a timeout occured */
+    return TIMEOUT;
+  }
+  else {
+    zr->readline_left = read(zr->readline_fd,
 				 zr->readline_ptr,
 				 zr->readline_readnum);
+  }
+
+
+
+
 	if (!zr->no_timeout)
 		alarm(0);
 	if (zr->readline_left == -1)
